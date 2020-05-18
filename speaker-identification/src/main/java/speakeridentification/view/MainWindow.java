@@ -25,18 +25,23 @@ public class MainWindow extends JFrame {
 
     private ProfileService profileService;
     private TrainingService trainingService;
+    private boolean soxPresent;
 
     JButton profilesButton;
     JButton trainingButton;
     List<JButton> menuButtons;
     JPanel mainPanel;
 
-    public MainWindow(ProfileService profileService, TrainingService trainingService) {
+    public MainWindow(ProfileService profileService, TrainingService trainingService, boolean soxPresent) {
         this.profileService = profileService;
         this.trainingService = trainingService;
+        this.soxPresent = soxPresent;
         initFrame();
         createGUI();
         setActionListeners();
+        if (!soxPresent) {
+            JOptionPane.showMessageDialog(null, "<html>SoX not found on your device.<br>Download and install it from http://sox.sourceforge.net/ to enable input from audio files!</html>", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     private void initFrame() {
@@ -68,8 +73,7 @@ public class MainWindow extends JFrame {
     }
 
     private void doUponExit() {
-        //TODO save model state
-        DbInitializer.shutdown(); // TODO this with events
+        DbInitializer.shutdown();
         this.dispose();
         System.exit(0);
     }
@@ -106,6 +110,7 @@ public class MainWindow extends JFrame {
     private void profilesButtonClicked() {
         mainPanel.removeAll();
         mainPanel = new ProfilesPanel(profileService, this);
+        ((ProfilesPanel)mainPanel).enableSoxRelatedControls(soxPresent);
         getContentPane().add(mainPanel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -124,4 +129,5 @@ public class MainWindow extends JFrame {
             button.setEnabled(enabled);
         }
     }
+
 }

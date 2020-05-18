@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.swing.SwingUtilities;
@@ -49,8 +51,14 @@ public class App {
             modelDAO, profileDAO, fileHandler, new NeuralNetworkHolder(baseDirAbsolutePath));
 
         SwingUtilities.invokeLater(() -> {
-            MainWindow m = new MainWindow(profileService, trainingService);
+            MainWindow m = new MainWindow(profileService, trainingService, checkSoxIsPresent());
             m.setVisible(true);
         });
+    }
+
+    private static boolean checkSoxIsPresent() {
+        String path = System.getenv("PATH");
+        Optional<String> found = Arrays.stream(path.split(";")).filter(s -> s.contains("sox")).findFirst();
+        return found.isPresent() && new File(found.get()).exists();
     }
 }

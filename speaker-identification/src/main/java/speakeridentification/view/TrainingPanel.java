@@ -356,7 +356,7 @@ public class TrainingPanel extends JPanel {
 
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
 
-            @Override protected Void doInBackground() throws Exception {
+            @Override protected Void doInBackground() {
                 service.train(modelToUse, profilesToUse, (Integer) profileNumberChooser.getValue(), (Integer) audioNumberChooser.getValue());
                 return null;
             }

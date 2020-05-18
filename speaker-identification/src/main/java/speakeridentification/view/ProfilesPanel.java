@@ -54,6 +54,7 @@ public class ProfilesPanel extends JPanel {
     private JButton saveButton;
     private JButton deleteButton;
     private JLabel statusLabel;
+    private JButton addAudioFileButton;
 
     public ProfilesPanel(ProfileService service, MainWindow parent) {
         this.service = service;
@@ -151,7 +152,7 @@ public class ProfilesPanel extends JPanel {
         JPanel line4 = new JPanel();
         line4.setLayout(new BoxLayout(line4, BoxLayout.LINE_AXIS));
         line4.setMaximumSize(new Dimension(400, 40));
-        JButton addAudioFileButton = new JButton("Add audio file");
+        addAudioFileButton = new JButton("Add audio file");
         addAudioFileButton.addActionListener((ActionEvent e) -> {
             onAddAudioFileClicked();
         });
@@ -316,5 +317,9 @@ public class ProfilesPanel extends JPanel {
             log.error(ex.getMessage(), ex); // TODO cause?
             showErrorMessage("Failed to delete profile(s).");
         }
+    }
+
+    public void enableSoxRelatedControls(boolean soxPresent) {
+        addAudioFileButton.setEnabled(soxPresent);
     }
 }
