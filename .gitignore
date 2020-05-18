@@ -1,0 +1,9 @@
+.idea/
+*.iml
+*.iws
+log/
+target/
+logs/
+*.log
+speakerdb
+app_files

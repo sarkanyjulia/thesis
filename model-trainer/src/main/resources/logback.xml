@@ -1,0 +1,25 @@
+<configuration>
+
+  <property name="pattern" value="%d{yyyy.MM.dd. HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n" />
+  <timestamp key="bySecond" datePattern="yyyyMMdd_HHmmss"/>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${pattern}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>C:/Users/user/Projects/logs/model-trainer_${bySecond}.log</file>
+    <append>true</append>
+    <encoder>
+      <pattern>${pattern}</pattern>
+    </encoder>
+  </appender>
+
+  <root level="info">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </root>
+
+</configuration>
