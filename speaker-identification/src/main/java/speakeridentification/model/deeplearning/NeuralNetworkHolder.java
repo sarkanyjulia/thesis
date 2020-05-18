@@ -39,6 +39,7 @@ public class NeuralNetworkHolder {
     public static final int numEpochs = 3;
 
     private final String trainingDirectory;
+    private final String predictDirectory;
 
     @Setter private MultiLayerNetwork pretrainedModel;
     @Getter @Setter private MultiLayerNetwork modelToUse;
@@ -47,6 +48,7 @@ public class NeuralNetworkHolder {
 
     public NeuralNetworkHolder(String baseDirectory) {
         trainingDirectory = FilenameUtils.concat(FilenameUtils.concat(baseDirectory, "audio"),"train");
+        predictDirectory = FilenameUtils.concat(FilenameUtils.concat(baseDirectory, "audio"),"predict");
         predictIterators = new HashMap<>();
     }
 
@@ -109,7 +111,7 @@ public class NeuralNetworkHolder {
     public void setupForPrediction() {
         predictIterators.clear();
         for (String label : labels) {
-            String directoryName = FilenameUtils.concat(trainingDirectory, label);
+            String directoryName = FilenameUtils.concat(predictDirectory, label);
             File directory = new File(directoryName);
             Iterator<File> iterator = FileUtils.iterateFiles(directory, new String[]{"png"}, false);
             predictIterators.put(label, iterator);
