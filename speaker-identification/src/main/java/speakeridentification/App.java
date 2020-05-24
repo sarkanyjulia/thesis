@@ -16,7 +16,7 @@ import speakeridentification.model.service.DefaultProfileService;
 import speakeridentification.model.service.TrainingService;
 import speakeridentification.model.service.ProfileService;
 import speakeridentification.model.utils.FileHandler;
-import speakeridentification.persistence.DbInitializer;
+import speakeridentification.persistence.DbHandler;
 import speakeridentification.persistence.DefaultModelDAO;
 import speakeridentification.persistence.DefaultProfileDAO;
 import speakeridentification.persistence.ModelDAO;
@@ -40,8 +40,8 @@ public class App {
 
         String baseDirAbsolutePath = new File(properties.getProperty("baseDirectory")).getAbsolutePath();
 
-        DbInitializer db = new DbInitializer(properties.getProperty("connectionString"));
-        db.createTables();
+        DbHandler db = new DbHandler(properties.getProperty("connectionString"));
+        db.initialize();
 
         FileHandler fileHandler = new FileHandler(baseDirAbsolutePath);
         ProfileDAO profileDAO = new DefaultProfileDAO(properties.getProperty("connectionString"));

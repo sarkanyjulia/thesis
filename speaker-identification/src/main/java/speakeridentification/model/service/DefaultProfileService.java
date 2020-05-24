@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
-import speakeridentification.domain.Audio;
-import speakeridentification.domain.Profile;
+import speakeridentification.persistence.domain.Audio;
+import speakeridentification.persistence.domain.Profile;
 import speakeridentification.model.data.ProfileData;
-import speakeridentification.model.data.SourceType;
 import speakeridentification.model.exceptions.InvalidInputException;
 import speakeridentification.model.utils.FileHandler;
 import speakeridentification.persistence.ProfileDAO;
@@ -16,14 +15,14 @@ import speakeridentification.persistence.ProfileDAO;
 @AllArgsConstructor
 public class DefaultProfileService implements ProfileService {
 
-    private ProfileDAO dao;
+    private ProfileDAO profileDAO;
     private FileHandler fileHandler;
 
     @Override public int createProfile(ProfileData input) {
         checkInput(input);
         List<Audio> audioList = getAudioData(input);
         Profile profileToSave = Profile.builder().name(input.getName()).type(input.getType()).audios(audioList).build();
-        return dao.createProfile(profileToSave);
+        return profileDAO.createProfile(profileToSave);
     }
 
     private void checkInput(ProfileData toSave) {
@@ -51,7 +50,7 @@ public class DefaultProfileService implements ProfileService {
     }
 
     @Override public List<ProfileData> findAllProfiles() {
-        return dao.findAllProfiles().stream().map(this::transform).collect(Collectors.toList());
+        return profileDAO.findAllProfiles().stream().map(this::transform).collect(Collectors.toList());
     }
 
     private ProfileData transform(Profile profile) {
@@ -59,6 +58,6 @@ public class DefaultProfileService implements ProfileService {
     }
 
     @Override public void deleteProfiles(List<Integer> ids) {
-        dao.deleteProfiles(ids);
+        profileDAO.deleteProfiles(ids);
     }
 }

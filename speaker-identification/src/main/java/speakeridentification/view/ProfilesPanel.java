@@ -23,14 +23,13 @@ import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SpinnerListModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import lombok.extern.slf4j.Slf4j;
-import speakeridentification.domain.SpeakerType;
+import speakeridentification.persistence.domain.SpeakerType;
 import speakeridentification.model.data.AudioSource;
 import speakeridentification.model.data.ProfileData;
 import speakeridentification.model.data.SourceType;
@@ -48,7 +47,6 @@ public class ProfilesPanel extends JPanel {
     private ProfilesTableModel tableModel;
     private JTextField nameField;
     private JLabel sourcePath;
-    //private JComboBox<SpeakerType> typeField;
     private JSpinner typeField;
     private SourceType selectedSourceType;
     private JButton saveButton;
@@ -123,13 +121,6 @@ public class ProfilesPanel extends JPanel {
         line2.setMaximumSize(new Dimension(400, 40));
         JLabel typeLabel = new JLabel("Type:");
         typeLabel.setSize(100, 40);
-/*
-        JPanel comboBoxContainer = new JPanel();
-        typeField = new JComboBox<>();
-        typeField.setModel(new DefaultComboBoxModel<>(SpeakerType.values()));
-        comboBoxContainer.add(typeField);
-
- */
 
         typeField = new JSpinner();
         typeField.setModel(new SpinnerCircularListModel(SpeakerType.values()));
@@ -203,7 +194,6 @@ public class ProfilesPanel extends JPanel {
         statusLabel.setText("Saving data...");
         ProfileData toSave = ProfileData.builder()
             .name(nameField.getText())
-            //.type(typeField.getItemAt(typeField.getSelectedIndex()))
             .type((SpeakerType) typeField.getValue())
             .source(AudioSource.builder()
                 .sourcePath(sourcePath.getText())
@@ -257,7 +247,6 @@ public class ProfilesPanel extends JPanel {
 
     private void clearInput() {
         nameField.setText("");
-        //typeField.setSelectedIndex(0);
         typeField.setValue(SpeakerType.UNCATEGORIZED);
         sourcePath.setText("");
         selectedSourceType = null;
@@ -289,22 +278,24 @@ public class ProfilesPanel extends JPanel {
     }
 
     private void onDeleteClicked() {
-        int n = JOptionPane.showConfirmDialog(
-            null,
-            "Are you sure you want to delete the selected profile(s)?",
-            "Confirmation",
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.INFORMATION_MESSAGE,
-            null
-        );
-        if (n == JOptionPane.OK_OPTION) {
-            executeDelete();
+        if (profilesTable.getSelectedRows().length > 0) {
+            int n = JOptionPane.showConfirmDialog(
+                null,
+                "Are you sure you want to delete the selected profile(s)?",
+                "Confirmation",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null
+            );
+            if (n == JOptionPane.OK_OPTION) {
+                executeDelete();
+            }
         }
     }
 
     private void executeDelete() {
         int[] selectedRows = profilesTable.getSelectedRows();
-        List<Integer> idsToDelete = new ArrayList<>();// = Arrays.stream(profilesTable.getSelectedRows()).boxed().map(i -> profilesTable.getValueAt(i, 0)).collect(Collectors.toList());
+        List<Integer> idsToDelete = new ArrayList<>();
         for (int i=0; i<selectedRows.length; ++i) {
             idsToDelete.add((Integer) profilesTable.getValueAt(selectedRows[i], 0));
         }

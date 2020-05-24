@@ -204,7 +204,7 @@ public class PredictModal extends JDialog {
             incrementCounter(allNum);
             if (nextPrediction.equals(e.getActionCommand())) {
                 incrementCounter(correctNum);
-            } else if (nextPrediction.equals(NeuralNetworkHolder.UNIDENTIFIED)) {
+            } else if (nextPrediction.equals(NeuralNetworkHolder.UNCERTAIN)) {
                 incrementCounter(uncertainNum);
             } else {
                 incrementCounter(incorrectNum);

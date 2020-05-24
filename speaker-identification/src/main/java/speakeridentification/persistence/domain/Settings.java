@@ -1,4 +1,4 @@
-package speakeridentification.persistence;
+package speakeridentification.persistence.domain;
 
 import java.util.ArrayList;
 import java.util.List;

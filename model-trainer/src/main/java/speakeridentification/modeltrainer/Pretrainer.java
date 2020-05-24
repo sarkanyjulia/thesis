@@ -35,9 +35,10 @@ public class Pretrainer {
     public void train(int numEpochs, int batchSize) {
         log.info("STARTED TRAINING");
 
-        int numLabels = SpectrogramIterator.setup(batchSize,trainPerc, dataDirectoryPath);
+        SpectrogramIterator.setup(batchSize,trainPerc, dataDirectoryPath);
         DataSetIterator trainIterator = SpectrogramIterator.trainIterator();
         DataSetIterator testIterator = SpectrogramIterator.testIterator();
+        int numLabels = trainIterator.totalOutcomes();
 
         MultiLayerNetwork model = getModel(numLabels);
 
@@ -52,9 +53,7 @@ public class Pretrainer {
         model.setListeners(new StatsListener(statsStorage),
             new ScoreIterationListener(50),
             new EvaluativeListener(testIterator, 1, InvocationType.EPOCH_END),
-            //new EvaluativeListener(testIterator, 1000, InvocationType.ITERATION_END),
             new CheckpointListener.Builder(saveDirectory).keepAll().saveEveryEpoch().build());
-                //.saveEveryNIterations(4000).build());
 
         model.fit(trainIterator, numEpochs);
 

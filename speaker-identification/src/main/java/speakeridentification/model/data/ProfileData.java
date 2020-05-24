@@ -1,10 +1,8 @@
 package speakeridentification.model.data;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import speakeridentification.domain.SpeakerType;
+import speakeridentification.persistence.domain.SpeakerType;
 
 @Data
 @Builder

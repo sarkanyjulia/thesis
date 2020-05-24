@@ -1,4 +1,4 @@
-package speakeridentification.domain;
+package speakeridentification.persistence.domain;
 
 import java.util.HashMap;
 import java.util.Map;

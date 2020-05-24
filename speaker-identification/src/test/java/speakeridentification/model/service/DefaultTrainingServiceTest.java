@@ -1,11 +1,12 @@
 package speakeridentification.model.service;
 
-import static org.mockito.BDDMockito.*;
-import static org.testng.Assert.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+import static org.testng.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
-
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.mockito.InjectMocks;
@@ -14,8 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import speakeridentification.domain.Audio;
-import speakeridentification.domain.SpeakerType;
 import speakeridentification.model.data.AudioSource;
 import speakeridentification.model.data.ProfileData;
 import speakeridentification.model.data.SourceType;
@@ -25,7 +24,9 @@ import speakeridentification.model.exceptions.ModelStateException;
 import speakeridentification.model.utils.FileHandler;
 import speakeridentification.persistence.ModelDAO;
 import speakeridentification.persistence.ProfileDAO;
-import speakeridentification.persistence.Settings;
+import speakeridentification.persistence.domain.Audio;
+import speakeridentification.persistence.domain.Settings;
+import speakeridentification.persistence.domain.SpeakerType;
 import speakeridentification.view.TrainingPanel;
 
 public class DefaultTrainingServiceTest {
@@ -75,7 +76,7 @@ public class DefaultTrainingServiceTest {
         // THEN
         then(profileDAO).should(times(1)).findAllAudioByProfileIds(profilesMap.keySet());
         then(fileHandler).should(times(1))
-            .saveProfilesForUse(profilesMap, List.of(testAudio), 1);
+            .copyProfilesForUse(profilesMap, List.of(testAudio), 1);
         then(networkHolder).should(times(1)).setPretrainedModel(network);
         then(modelDAO).should(times(1)).saveLastUsed(otherNetwork);
         then(modelDAO).should(times(1))

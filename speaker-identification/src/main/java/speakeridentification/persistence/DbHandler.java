@@ -16,12 +16,12 @@ import lombok.AllArgsConstructor;
 import speakeridentification.App;
 
 @AllArgsConstructor
-public class DbInitializer {
+public class DbHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(DbInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(DbHandler.class);
     private final String connectionString;
 
-    public void createTables() {
+    public void initialize() {
 
         try (Connection conn = getConnection(connectionString);
             Statement statement = conn.createStatement()) {

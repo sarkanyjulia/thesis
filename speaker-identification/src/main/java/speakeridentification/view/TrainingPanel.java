@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
@@ -30,12 +29,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 
 import lombok.extern.slf4j.Slf4j;
-import speakeridentification.domain.SpeakerType;
+import speakeridentification.persistence.domain.SpeakerType;
 import speakeridentification.model.exceptions.InvalidInputException;
 import speakeridentification.model.exceptions.ModelStateException;
 import speakeridentification.model.service.TrainingService;
 import speakeridentification.model.data.ProfileData;
-import speakeridentification.persistence.Settings;
+import speakeridentification.persistence.domain.Settings;
 import speakeridentification.persistence.exceptions.PersistenceException;
 
 @Slf4j
@@ -55,13 +54,12 @@ public class TrainingPanel extends JPanel {
     private String modelToUse;
     private JSpinner profileNumberChooser;
     private JList<ProfileData> profileChooser;
-    //private JComboBox<String> modelChooser;
     private JSpinner modelChooser;
     private JList<ProfileData> chosenProfilesList;
     private DefaultListModel<ProfileData> listModelTo;
     private DefaultListModel<ProfileData> listModelFrom;
     private SpinnerNumberModel profileSpinnerModel;
-    private ButtonGroup radioButtons;
+    private ButtonGroup filterButtons;
     private SpeakerType activeFilter;
     private JRadioButton noFilterButton;
     private JSpinner audioNumberChooser;
@@ -119,8 +117,6 @@ public class TrainingPanel extends JPanel {
         line5.setMaximumSize(new Dimension(900, 200));
 
         JLabel modelChoserLabel = new JLabel("Pretrained model");
-        //modelChooser = new JComboBox<>();
-        //modelChooser.setModel(new DefaultComboBoxModel<>(modelNames.toArray(new String[0])));
         modelChooser = new JSpinner();
         modelChooser.setModel(new SpinnerCircularListModel(modelNames));
         modelChooser.setMaximumSize(new Dimension(200, 30));
@@ -160,11 +156,11 @@ public class TrainingPanel extends JPanel {
         maleFilterButton.setActionCommand("male");
         femaleFilterButton.setActionCommand("female");
         childFilterButton.setActionCommand("child");
-        radioButtons = new ButtonGroup();
-        radioButtons.add(noFilterButton);
-        radioButtons.add(maleFilterButton);
-        radioButtons.add(femaleFilterButton);
-        radioButtons.add(childFilterButton);
+        filterButtons = new ButtonGroup();
+        filterButtons.add(noFilterButton);
+        filterButtons.add(maleFilterButton);
+        filterButtons.add(femaleFilterButton);
+        filterButtons.add(childFilterButton);
         line4.add(filtersLabel);
         line4.add(Box.createRigidArea(new Dimension(25, 40)));
         line4.add(new JLabel("no filter"));
@@ -213,7 +209,6 @@ public class TrainingPanel extends JPanel {
         trainButton.addActionListener((ActionEvent e) -> onTrainClicked());
         predictButton.addActionListener((ActionEvent e) -> onPredictClicked());
         resetButton.addActionListener((ActionEvent e) -> onResetClicked());
-        trainButton.setToolTipText(("Train model"));
         statusLabel = new JLabel("");
         buttonsPanel.add(trainButton);
         buttonsPanel.add(Box.createRigidArea(new Dimension(20, 40)));
@@ -270,18 +265,8 @@ public class TrainingPanel extends JPanel {
         statusLabel.setText(MODEL_NOT_TRAINED);
     }
 
-    private void filterProfiles() {
-        listModelFrom.removeAllElements();
-        if (activeFilter==null) {
-            listModelFrom.addAll(profiles);
-        } else {
-            listModelFrom.addAll(profiles.stream()
-                .filter(p -> p.getType().equals(activeFilter)).collect(Collectors.toList()));
-        }
-    }
-
     private void setFilter() {
-        String command = radioButtons.getSelection().getActionCommand();
+        String command = filterButtons.getSelection().getActionCommand();
         if (command != null) {
             switch (command) {
                 case "male": activeFilter=SpeakerType.MALE; break;
@@ -292,6 +277,16 @@ public class TrainingPanel extends JPanel {
             activeFilter = null;
         }
         filterProfiles();
+    }
+
+    private void filterProfiles() {
+        listModelFrom.removeAllElements();
+        if (activeFilter==null) {
+            listModelFrom.addAll(profiles);
+        } else {
+            listModelFrom.addAll(profiles.stream()
+                .filter(p -> p.getType().equals(activeFilter)).collect(Collectors.toList()));
+        }
     }
 
     private void addProfileToSelected(ListSelectionEvent event) {

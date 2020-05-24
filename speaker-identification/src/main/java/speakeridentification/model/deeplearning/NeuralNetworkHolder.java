@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -22,7 +21,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.learning.config.Adam;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +31,7 @@ import speakeridentification.model.exceptions.ModelStateException;
 public class NeuralNetworkHolder {
 
     public static final String featureExtractionLayer = "extractor";
-    public static final String UNIDENTIFIED = "unidentified";
+    public static final String UNCERTAIN = "uncertain";
     public static final int trainPerc = 80;
     public static final int batchSize = 1;
     public static final int numEpochs = 3;
@@ -49,6 +47,7 @@ public class NeuralNetworkHolder {
     public NeuralNetworkHolder(String baseDirectory) {
         trainingDirectory = FilenameUtils.concat(FilenameUtils.concat(baseDirectory, "audio"),"train");
         predictDirectory = FilenameUtils.concat(FilenameUtils.concat(baseDirectory, "audio"),"predict");
+        labels = new ArrayList<>();
         predictIterators = new HashMap<>();
     }
 
@@ -83,29 +82,8 @@ public class NeuralNetworkHolder {
     public void clearAll() {
         pretrainedModel = null;
         modelToUse = null;
-        labels = new ArrayList<>();
-    }
-
-    public String predict(File file, Double treshold) throws IOException {
-        String result = UNIDENTIFIED;
-        NativeImageLoader loader = new NativeImageLoader(SpectrogramIterator.height, SpectrogramIterator.width, SpectrogramIterator.channels);
-        INDArray image = loader.asMatrix(file);
-        INDArray output = modelToUse.output(image);
-        if ((Double)output.maxNumber() >= treshold) {
-            result = labels.get(output.argMax(1).getInt());
-        }
-        log.info("Predictions for sample of class " + FilenameUtils.getName(file.getParent()) + ":\n" +
-            output.toString() + "\n" + labels.toString() + "\nTreshold: " + treshold + " Result: " + result);
-        return result;
-    }
-
-    public String predictNext(String label, Double treshold) {
-        try {
-            File file = predictIterators.get(label).next();
-            return predict(file, treshold);
-        } catch (IOException e) {
-            throw new FileException("Unable to open file", e);
-        }
+        labels.clear();
+        predictIterators.clear();
     }
 
     public void setupForPrediction() {
@@ -117,4 +95,27 @@ public class NeuralNetworkHolder {
             predictIterators.put(label, iterator);
         }
     }
+
+    public String predictNext(String label, Double treshold) {
+        try {
+            File file = predictIterators.get(label).next();
+            return predict(file, treshold);
+        } catch (IOException e) {
+            throw new FileException("Unable to open file", e);
+        }
+    }
+
+    public String predict(File file, Double treshold) throws IOException {
+        String result = UNCERTAIN;
+        NativeImageLoader loader = new NativeImageLoader(SpectrogramIterator.height, SpectrogramIterator.width, SpectrogramIterator.channels);
+        INDArray image = loader.asMatrix(file);
+        INDArray output = modelToUse.output(image);
+        if ((Double)output.maxNumber() >= treshold) {
+            result = labels.get(output.argMax(1).getInt());
+        }
+        log.info("Predictions for sample of class " + FilenameUtils.getName(file.getParent()) + ":\n" +
+            output.toString() + "\n" + labels.toString() + "\nTreshold: " + treshold + " Result: " + result);
+        return result;
+    }
+
 }

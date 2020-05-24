@@ -1,5 +1,6 @@
 package speakeridentification.model.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -13,8 +14,8 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import speakeridentification.domain.Profile;
-import speakeridentification.domain.SpeakerType;
+import speakeridentification.persistence.domain.Profile;
+import speakeridentification.persistence.domain.SpeakerType;
 import speakeridentification.model.data.AudioSource;
 import speakeridentification.model.data.ProfileData;
 import speakeridentification.model.data.SourceType;
@@ -28,6 +29,7 @@ public class DefaultProfileServiceTest {
  public static final String NAME = "name";
  public static final SpeakerType SPEAKER_TYPE = SpeakerType.MALE;
  public static final String SOURCE_PATH = "source";
+ public static final String TEMPDIR = "tempdir";
 
  @Mock private ProfileDAO dao;
  @Mock private FileHandler fileHandler;
@@ -61,6 +63,20 @@ public class DefaultProfileServiceTest {
 
  private Profile createTestProfile() {
   return Profile.builder().name(NAME).type(SPEAKER_TYPE).audios(List.of()).build();
+ }
+
+ @Test public void createWithWavSource() {
+  // GIVEN
+  ProfileData profileData = createTestProfileData();
+  profileData.getSource().setType(SourceType.WAV);
+  given(fileHandler.processAudioFile(any())).willReturn(TEMPDIR);
+
+  // WHEN
+  underTest.createProfile(profileData);
+
+  // THEN
+  then(fileHandler).should(times(1)).processAudioFile(SOURCE_PATH);
+  then(fileHandler).should(times(1)).loadSpectrograms(TEMPDIR);
  }
 
  @Test(expectedExceptions = { InvalidInputException.class })

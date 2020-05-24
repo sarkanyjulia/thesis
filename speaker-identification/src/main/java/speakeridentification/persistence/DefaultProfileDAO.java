@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import lombok.AllArgsConstructor;
-import speakeridentification.domain.Audio;
-import speakeridentification.domain.Profile;
-import speakeridentification.domain.SpeakerType;
+import speakeridentification.persistence.domain.Audio;
+import speakeridentification.persistence.domain.Profile;
+import speakeridentification.persistence.domain.SpeakerType;
 import speakeridentification.persistence.exceptions.PersistenceException;
 
 @AllArgsConstructor

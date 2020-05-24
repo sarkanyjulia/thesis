@@ -1,11 +1,10 @@
 package speakeridentification.persistence;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-import speakeridentification.domain.Audio;
-import speakeridentification.domain.Profile;
+import speakeridentification.persistence.domain.Audio;
+import speakeridentification.persistence.domain.Profile;
 
 public interface ProfileDAO {
 

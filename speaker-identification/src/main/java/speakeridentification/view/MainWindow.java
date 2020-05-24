@@ -15,7 +15,7 @@ import javax.swing.JToolBar;
 
 import speakeridentification.model.service.TrainingService;
 import speakeridentification.model.service.ProfileService;
-import speakeridentification.persistence.DbInitializer;
+import speakeridentification.persistence.DbHandler;
 
 public class MainWindow extends JFrame {
 
@@ -73,7 +73,7 @@ public class MainWindow extends JFrame {
     }
 
     private void doUponExit() {
-        DbInitializer.shutdown();
+        DbHandler.shutdown();
         this.dispose();
         System.exit(0);
     }

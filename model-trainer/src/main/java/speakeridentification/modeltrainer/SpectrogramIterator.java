@@ -30,7 +30,6 @@ public class SpectrogramIterator {
     private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
     private static InputSplit trainData,testData;
     private static int batchSize;
-    private static int numClasses;
 
     public static DataSetIterator trainIterator() {
         return makeIterator(trainData);
@@ -40,11 +39,9 @@ public class SpectrogramIterator {
         return makeIterator(testData);
     }
 
-    public static int setup(int batchSizeArg, int trainPerc, String parentDirPath) {
+    public static void setup(int batchSizeArg, int trainPerc, String parentDirPath) {
         batchSize = batchSizeArg;
         File parentDir = new File(parentDirPath);
-        numClasses = countSubdirectories(parentDir);
-        log.info("Number of classes set to " + numClasses);
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, rng);
         BalancedPathFilter pathFilter = new BalancedPathFilter(rng, allowedExtensions, labelMaker);
         if (trainPerc >= 100) {
@@ -53,13 +50,6 @@ public class SpectrogramIterator {
         InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, trainPerc, 100-trainPerc);
         trainData = filesInDirSplit[0];
         testData = filesInDirSplit[1];
-        return numClasses;
-    }
-
-    private static int countSubdirectories(File parentDir) {
-        File[] directories = parentDir.listFiles();
-        long count = Arrays.stream(Objects.requireNonNull(directories)).filter(File::isDirectory).count();
-        return (int) count;
     }
 
     private static DataSetIterator makeIterator(InputSplit split) {
@@ -69,6 +59,6 @@ public class SpectrogramIterator {
         } catch (IOException e) {
             throw new RuntimeException("Unable to read training data.", e);
         }
-        return new RecordReaderDataSetIterator(recordReader, batchSize, 1, numClasses);
+        return new RecordReaderDataSetIterator(recordReader, batchSize, 1, recordReader.numLabels());
     }
 }

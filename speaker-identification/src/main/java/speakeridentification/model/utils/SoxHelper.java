@@ -51,7 +51,7 @@ public class SoxHelper {
         log.info(inputFile + " processed using sox");
     }
 
-    private static void executeSoxCommand(String commandFormat, String input, String output) throws IOException {
+    private static void executeSoxCommand(String commandFormat, String input, String output) throws IOException { //TODO error message + custom exception
         String cmd = String.format(commandFormat, input, output);
         log.debug("Command to be executed: " + cmd);
         ProcessBuilder builder = new ProcessBuilder();
@@ -65,16 +65,12 @@ public class SoxHelper {
         try {
             exitCode = process.waitFor();
         } catch (InterruptedException e) {
-            log.error("Processing " + input + " was interrupted");
-            process.destroy();
+            log.error("Processing " + input + " was interrupted", e.getMessage());
+        } finally {
+            if (process != null) {
+                process.destroy();
+            }
         }
         assert exitCode == 0;
-    }
-
-    public static void clear() throws IOException {
-        File baseDir = new File(BASE_DIR);
-        if (baseDir.exists()) {
-            FileUtils.deleteDirectory(baseDir);
-        }
     }
 }

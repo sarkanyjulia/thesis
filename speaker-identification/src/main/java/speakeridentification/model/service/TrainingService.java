@@ -3,7 +3,7 @@ package speakeridentification.model.service;
 import java.util.List;
 
 import speakeridentification.model.data.ProfileData;
-import speakeridentification.persistence.Settings;
+import speakeridentification.persistence.domain.Settings;
 
 public interface TrainingService {
 

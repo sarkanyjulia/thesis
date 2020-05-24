@@ -16,7 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import lombok.AllArgsConstructor;
-import speakeridentification.domain.Audio;
+import speakeridentification.persistence.domain.Audio;
 import speakeridentification.model.exceptions.FileException;
 import speakeridentification.model.exceptions.InvalidInputException;
 
@@ -37,7 +37,7 @@ public class FileHandler {
                 imageList.add(loadSpectrogram(files[i]));
             }
         } else {
-            throw new InvalidInputException("Folder does not contain enough data,\nplease upload at least 20 spectrograms per profile!");
+            throw new InvalidInputException("Not enough data,\nplease upload at least 20 spectrograms per profile or a longer audio file!");
         }
         return imageList;
     }
@@ -60,7 +60,8 @@ public class FileHandler {
         return result;
     }
 
-    public void saveProfilesForUse(Map<Integer, String> profilesMap, List<Audio> audioList, int numAudio) {
+    public void copyProfilesForUse(Map<Integer, String> profilesMap, List<Audio> audioList, int numAudio) {
+        clearAll();
         String audioDirectory = FilenameUtils.concat(baseDirectory, "audio");
         String trainDirectory = FilenameUtils.concat(audioDirectory, "train");
         String predictDirectory = FilenameUtils.concat(audioDirectory, "predict");

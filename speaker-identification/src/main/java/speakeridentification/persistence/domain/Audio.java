@@ -1,4 +1,4 @@
-package speakeridentification.domain;
+package speakeridentification.persistence.domain;
 
 import lombok.Builder;
 import lombok.Data;

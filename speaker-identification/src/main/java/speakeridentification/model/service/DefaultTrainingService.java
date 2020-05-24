@@ -1,29 +1,23 @@
 package speakeridentification.model.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import org.bytedeco.javacv.FrameFilter;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import speakeridentification.domain.Audio;
-import speakeridentification.domain.Profile;
+import speakeridentification.persistence.domain.Audio;
+import speakeridentification.persistence.domain.Profile;
+import speakeridentification.persistence.domain.Settings;
 import speakeridentification.model.data.ProfileData;
 import speakeridentification.model.deeplearning.NeuralNetworkHolder;
-import speakeridentification.model.exceptions.FileException;
 import speakeridentification.model.exceptions.InvalidInputException;
 import speakeridentification.model.exceptions.ModelStateException;
 import speakeridentification.model.utils.FileHandler;
 import speakeridentification.persistence.ModelDAO;
 import speakeridentification.persistence.ProfileDAO;
-import speakeridentification.persistence.Settings;
 import speakeridentification.view.TrainingPanel;
 
 @AllArgsConstructor
@@ -43,7 +37,7 @@ public class DefaultTrainingService implements TrainingService {
         Map<Integer, String> profilesMap = new HashMap<>();
         profilesChosen.forEach(p -> profilesMap.put(p.getId(), p.getName()));
         List<Audio> audios = profileDAO.findAllAudioByProfileIds(profilesMap.keySet());
-        fileHandler.saveProfilesForUse(profilesMap, audios, numAudio);
+        fileHandler.copyProfilesForUse(profilesMap, audios, numAudio);
         networkHolder.setPretrainedModel(modelDAO.getPretrainedModel(modelToUse));
         MultiLayerNetwork newModel = networkHolder.train();
         modelDAO.saveLastUsed(newModel);

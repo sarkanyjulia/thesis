@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 
+import speakeridentification.persistence.domain.Settings;
+
 public interface ModelDAO {
 
     List<String> listModels();
