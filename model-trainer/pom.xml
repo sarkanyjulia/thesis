@@ -88,7 +88,7 @@
               <archive>
                 <manifest>
                   <mainClass>
-                    speakeridentification.modeltrainer.PretrainRunner
+                    speakeridentification.modeltrainer.Main
                   </mainClass>
                 </manifest>
               </archive>

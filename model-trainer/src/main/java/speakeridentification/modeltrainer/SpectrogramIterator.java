@@ -2,8 +2,6 @@ package speakeridentification.modeltrainer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
 
 import org.datavec.api.io.filters.BalancedPathFilter;

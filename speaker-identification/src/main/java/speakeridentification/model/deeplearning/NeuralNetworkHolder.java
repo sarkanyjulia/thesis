@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.datavec.image.loader.NativeImageLoader;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.transferlearning.FineTuneConfiguration;
 import org.deeplearning4j.nn.transferlearning.TransferLearning;
@@ -18,9 +19,11 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.api.InvocationType;
 import org.deeplearning4j.optimize.listeners.EvaluativeListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.learning.config.Adam;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -70,7 +73,7 @@ public class NeuralNetworkHolder {
         int numLabels = trainIterator.totalOutcomes();
         labels = trainIterator.getLabels();
 
-            FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
+        FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
             .updater(new Adam())
             .seed(123)
             .build();
@@ -78,7 +81,15 @@ public class NeuralNetworkHolder {
         modelToUse = new TransferLearning.Builder(pretrainedModel)
             .fineTuneConfiguration(fineTuneConf)
             .setFeatureExtractor(layerIndex)
-            .nOutReplace(layerIndex+1, numLabels, WeightInit.XAVIER)
+            .addLayer(
+                new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                    .name("output")
+                    .nIn(819200)
+                    .nOut(3)
+                    .activation(Activation.SOFTMAX)
+                    .weightInit(WeightInit.XAVIER)
+                    .build()
+            )
             .build();
         log.info("Started training with transformed model\n" + modelToUse.summary());
 

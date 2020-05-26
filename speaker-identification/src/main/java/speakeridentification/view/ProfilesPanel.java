@@ -137,7 +137,7 @@ public class ProfilesPanel extends JPanel {
         sourceLabel.setSize(100, 40);
         sourcePath = new JLabel("");
         line3.add(sourceLabel);
-        line2.add(Box.createRigidArea(new Dimension(20, 40)));
+        line3.add(Box.createRigidArea(new Dimension(14, 40)));
         line3.add(sourcePath);
 
         JPanel line4 = new JPanel();
