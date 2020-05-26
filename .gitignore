@@ -10,3 +10,5 @@ app_files
 *.*uml
 .settings/
 .project
+*.ucls
+.classpath

@@ -1,33 +1,20 @@
 package speakeridentification.persistence;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import lombok.extern.slf4j.Slf4j;
 import speakeridentification.persistence.domain.Settings;
@@ -50,6 +37,7 @@ public class DefaultModelDAO implements ModelDAO {
      */
     @Override public List<String> listModels() {
         List<String> filenames = new ArrayList<>();
+        /*
         final String path = TRAINED_MODELS_DIRECTORY;
         final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
         if(jarFile.isFile()) {  // Run with JAR file
@@ -87,16 +75,28 @@ public class DefaultModelDAO implements ModelDAO {
                 }
             }
         }
+
+         */
+        final File models = new File(TRAINED_MODELS_DIRECTORY);
+        File[] files = models.listFiles();
+        if (files != null) {
+            for (File model : files) {
+                filenames.add(model.getName());
+            }
+        } else throw new PersistenceException("Unable to find trained models");
         return filenames;
     }
 
     @Override public MultiLayerNetwork getPretrainedModel(String modelName) {
         MultiLayerNetwork result = null;
         try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            /*ClassLoader loader = Thread.currentThread().getContextClassLoader();
             URL url = loader.getResource(TRAINED_MODELS_DIRECTORY);
             assert url != null;
             String fileName = FilenameUtils.concat(url.getPath(), modelName);
+             */
+            String fileName = FilenameUtils.concat(TRAINED_MODELS_DIRECTORY, modelName);
+
             result = MultiLayerNetwork.load(new File(fileName), false);
         } catch (IOException e) {
             throw new PersistenceException("Failed to load pretrained model", e);
