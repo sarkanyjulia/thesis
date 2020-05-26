@@ -85,7 +85,7 @@ public class NeuralNetworkHolder {
                 new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                     .name("output")
                     .nIn(819200)
-                    .nOut(3)
+                    .nOut(numLabels)
                     .activation(Activation.SOFTMAX)
                     .weightInit(WeightInit.XAVIER)
                     .build()
