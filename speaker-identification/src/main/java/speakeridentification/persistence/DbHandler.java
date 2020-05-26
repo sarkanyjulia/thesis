@@ -28,7 +28,7 @@ public class DbHandler {
             if (!tableExists("profile", conn)) {
                 String create = "CREATE TABLE profile ("
                     + "id integer not null primary key GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                    + "name varchar(128) not null unique, "
+                    + "name varchar(40) not null unique, "
                     + "type integer not null constraint type_const check (type in (0, 1, 2, 3)))";
                 statement.execute(create);
                 log.info("Created table 'profile'");

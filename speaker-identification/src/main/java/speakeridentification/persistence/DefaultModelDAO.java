@@ -12,7 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -23,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -96,7 +99,7 @@ public class DefaultModelDAO implements ModelDAO {
             String fileName = FilenameUtils.concat(url.getPath(), modelName);
             result = MultiLayerNetwork.load(new File(fileName), false);
         } catch (IOException e) {
-            throw new PersistenceException("Unable to load pretrained model", e);
+            throw new PersistenceException("Failed to load pretrained model", e);
         }
         return result;
     }
@@ -128,15 +131,15 @@ public class DefaultModelDAO implements ModelDAO {
     @Override public void saveLastSettings(Settings settings) {
         JSONObject modelSettings = new JSONObject();
         modelSettings.put("modelToUse", settings.getModelToUse());
-        modelSettings.put("numProfiles", settings.getNumProfiles());
         modelSettings.put("numAudio", settings.getNumAudio());
         JSONArray labelsArray = new JSONArray();
         labelsArray.addAll(settings.getLabels());
         modelSettings.put("labels", labelsArray);
+        modelSettings.put("profiles", settings.getProfilesMap());
         try {
             Files.write(Paths.get(modelSettingsFile), modelSettings.toJSONString().getBytes());
-        } catch (IOException e) {
-            throw new PersistenceException("Failed to load last used model", e);
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to save settings", e);
         }
     }
 
@@ -148,12 +151,13 @@ public class DefaultModelDAO implements ModelDAO {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
             settings.setModelToUse((String) jsonObject.get("modelToUse"));
             settings.setNumAudio(Math.toIntExact((Long) jsonObject.get("numAudio")));
-            settings.setNumProfiles(Math.toIntExact((Long) jsonObject.get("numProfiles")));
             JSONArray labelsArray = (JSONArray) jsonObject.get("labels");
             for (var item : labelsArray) {
                 settings.getLabels().add((String) item);
             }
-        } catch (ParseException | IOException e) {
+            HashMap<String, String> profilesMap = (HashMap<String, String>)jsonObject.get("profiles");
+            settings.setProfilesMap(profilesMap);
+        } catch (Exception e) {
             throw new PersistenceException("Failed to load last settings", e);
         }
         return settings;

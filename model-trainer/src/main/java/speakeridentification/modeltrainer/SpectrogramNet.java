@@ -37,7 +37,7 @@ public class SpectrogramNet {
             .seed(123)
             .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
             .weightInit(WeightInit.XAVIER)
-            .updater(new AdaDelta())
+            .updater(new Adam())
             .list()
             .layer(new ConvolutionLayer.Builder().kernelSize(3, 3).stride(1, 1).padding(1, 1).activation(Activation.RELU)
                 .nIn(channels).nOut(8).build())

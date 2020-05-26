@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -43,17 +44,25 @@ public class NeuralNetworkHolder {
     @Getter @Setter private MultiLayerNetwork modelToUse;
     @Getter @Setter private List<String> labels;
     private HashMap<String, Iterator<File>> predictIterators;
+    @Getter private HashMap<String, String> profilesMap;
 
     public NeuralNetworkHolder(String baseDirectory) {
         trainingDirectory = FilenameUtils.concat(FilenameUtils.concat(baseDirectory, "audio"),"train");
         predictDirectory = FilenameUtils.concat(FilenameUtils.concat(baseDirectory, "audio"),"predict");
         labels = new ArrayList<>();
         predictIterators = new HashMap<>();
+        profilesMap = new HashMap<>();
     }
 
-    public MultiLayerNetwork train() {
-        if (pretrainedModel == null) throw new ModelStateException("No model set"); // TODO
+    private void setupForTraining(MultiLayerNetwork pretrainedModel, HashMap<String, String> profilesMap) {
+        if (pretrainedModel == null) throw new ModelStateException("Unable to find pretrained model");
+        this.pretrainedModel = pretrainedModel;
+        this.profilesMap = profilesMap;
         log.info("Loaded pretrained model\n" + pretrainedModel.summary());
+    }
+
+    public MultiLayerNetwork train(MultiLayerNetwork pretrainedModel, HashMap<String, String> profilesMap) {
+        setupForTraining(pretrainedModel, profilesMap);
         int layerIndex = pretrainedModel.getLayer(featureExtractionLayer).getIndex();
         SpectrogramIterator.setup(batchSize,trainPerc, trainingDirectory);
         DataSetIterator trainIterator = SpectrogramIterator.trainIterator();
@@ -84,9 +93,11 @@ public class NeuralNetworkHolder {
         modelToUse = null;
         labels.clear();
         predictIterators.clear();
+        profilesMap.clear();
     }
 
     public void setupForPrediction() {
+        if (modelToUse == null) throw new ModelStateException("Unable to find trained model");
         predictIterators.clear();
         for (String label : labels) {
             String directoryName = FilenameUtils.concat(predictDirectory, label);
@@ -111,11 +122,18 @@ public class NeuralNetworkHolder {
         INDArray image = loader.asMatrix(file);
         INDArray output = modelToUse.output(image);
         if ((Double)output.maxNumber() >= treshold) {
-            result = labels.get(output.argMax(1).getInt());
+            String label = labels.get(output.argMax(1).getInt());
+            result = profilesMap.get(label);
         }
         log.info("Predictions for sample of class " + FilenameUtils.getName(file.getParent()) + ":\n" +
             output.toString() + "\n" + labels.toString() + "\nTreshold: " + treshold + " Result: " + result);
         return result;
+    }
+
+    public void setupWithLastSave(MultiLayerNetwork lastUsed, List<String> labels, HashMap<String, String> profilesMap) {
+        modelToUse = lastUsed;
+        this.labels = labels;
+        this.profilesMap = profilesMap;
     }
 
 }

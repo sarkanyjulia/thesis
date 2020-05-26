@@ -225,10 +225,10 @@ public class TrainingPanel extends JPanel {
             if (service.lastSaveExists()) {
                 Settings settings = service.loadLastSettings();
                 modelChooser.setValue(settings.getModelToUse());
-                profileNumberChooser.setValue(settings.getNumProfiles());
+                profileNumberChooser.setValue(settings.getProfilesMap().size());
                 audioNumberChooser.setValue(settings.getNumAudio());
                 listModelTo.addAll(profiles.stream()
-                    .filter(p -> settings.getLabels().contains(p.getName())).collect(Collectors.toList()));
+                    .filter(p -> settings.getProfilesMap().containsValue(p.getName())).collect(Collectors.toList()));
                 enableInputForTrainedState();
             } else {
                 enableInputForUntrainedState();

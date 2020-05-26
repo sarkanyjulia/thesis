@@ -7,6 +7,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.swing.BorderFactory;
@@ -23,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import speakeridentification.model.deeplearning.NeuralNetworkHolder;
 import speakeridentification.model.service.TrainingService;
@@ -31,7 +33,7 @@ import speakeridentification.model.service.TrainingService;
 public class PredictModal extends JDialog {
 
     private TrainingService service;
-    private List<String> profileNames;
+    private Map<String, String> profileNames;
     private JTextField predictedText;
     private JTextField actualText;
     private ProbabilityInputField tresholdField;
@@ -87,9 +89,9 @@ public class PredictModal extends JDialog {
         profileButtonPanel.setLayout(new BoxLayout(profileButtonPanel, BoxLayout.PAGE_AXIS));
         mainPanel.add(profileButtonPanel);
 
-        for (String name : profileNames) {
-            JButton button = new JButton(name);
-            button.setActionCommand(name);
+        for (var entry : profileNames.entrySet()) {
+            JButton button = new JButton(entry.getValue());
+            button.setActionCommand(entry.getKey());
             button.addActionListener(this::profileButtonClicked);
             profileButtonPanel.add(button);
             profileButtonPanel.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -136,11 +138,9 @@ public class PredictModal extends JDialog {
         line1.add(predictedLabel);
         line1.add(Box.createHorizontalGlue());
         line2.add(predictedText);
-        //line2.add(Box.createHorizontalGlue());
         line3.add(actualLabel);
         line3.add(Box.createHorizontalGlue());
         line4.add(actualText);
-        //line4.add(Box.createHorizontalGlue());
 
         JPanel statsPanel = new JPanel();
         statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.PAGE_AXIS));
@@ -197,12 +197,13 @@ public class PredictModal extends JDialog {
 
     private void profileButtonClicked(ActionEvent e) {
         setEnabledAllInput(false);
+        String profileName = profileNames.get(e.getActionCommand());
         try {
             String nextPrediction = service.getNextPrediction(e.getActionCommand(), tresholdField.getValue() / 100);
             predictedText.setText(nextPrediction);
-            actualText.setText(e.getActionCommand());
+            actualText.setText(profileName);
             incrementCounter(allNum);
-            if (nextPrediction.equals(e.getActionCommand())) {
+            if (nextPrediction.equals(profileName)) {
                 incrementCounter(correctNum);
             } else if (nextPrediction.equals(NeuralNetworkHolder.UNCERTAIN)) {
                 incrementCounter(uncertainNum);
@@ -210,7 +211,6 @@ public class PredictModal extends JDialog {
                 incrementCounter(incorrectNum);
             }
         } catch (NoSuchElementException ex) {
-            String profileName = e.getActionCommand();
             showInfoMessage("No more samples for " + profileName);
             JButton button = (JButton)e.getSource();
             activeProfileButtons.remove(button);

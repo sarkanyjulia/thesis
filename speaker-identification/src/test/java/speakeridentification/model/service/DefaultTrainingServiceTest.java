@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import speakeridentification.model.data.AudioSource;
@@ -48,7 +49,6 @@ public class DefaultTrainingServiceTest {
     @Mock private MultiLayerNetwork otherNetwork;
     @InjectMocks private DefaultTrainingService underTest;
 
-
     @BeforeMethod
     public void setup() { MockitoAnnotations.initMocks(this); }
 
@@ -62,26 +62,27 @@ public class DefaultTrainingServiceTest {
     public void trainOK() {
         // GIVEN
         ProfileData profileData = createTestProfileData();
-        HashMap<Integer, String> profilesMap = new HashMap<>();
-        profilesMap.put(ID, NAME);
+        HashMap<String, String> profilesMap = new HashMap<>();
+        profilesMap.put(Integer.toString(ID), NAME);
         Audio testAudio = Audio.builder().profileId(ID).build();
-        given(profileDAO.findAllAudioByProfileIds(profilesMap.keySet())).willReturn(List.of(testAudio));
+        given(profileDAO.findAllAudioByProfileIds(List.of(ID))).willReturn(List.of(testAudio));
         given(modelDAO.getPretrainedModel(MODEL_TO_USE)).willReturn(network);
-        given(networkHolder.train()).willReturn(otherNetwork);
+        given(networkHolder.train(network, profilesMap)).willReturn(otherNetwork);
         given(networkHolder.getLabels()).willReturn(TEST_LABELS);
 
         // WHEN
         underTest.train(MODEL_TO_USE, List.of(profileData), 1, 1);
 
         // THEN
-        then(profileDAO).should(times(1)).findAllAudioByProfileIds(profilesMap.keySet());
+        then(profileDAO).should(times(1)).findAllAudioByProfileIds(List.of(ID));
         then(fileHandler).should(times(1))
-            .copyProfilesForUse(profilesMap, List.of(testAudio), 1);
-        then(networkHolder).should(times(1)).setPretrainedModel(network);
+            .copyProfilesForUse(List.of(ID), List.of(testAudio), 1);
+        then(networkHolder).should(times(1)).train(network, profilesMap);
         then(modelDAO).should(times(1)).saveLastUsed(otherNetwork);
         then(modelDAO).should(times(1))
-            .saveLastSettings(new Settings(MODEL_TO_USE, TEST_LABELS,1,1));
+            .saveLastSettings(new Settings(MODEL_TO_USE, TEST_LABELS,1, profilesMap));
     }
+
 
     @Test(expectedExceptions = InvalidInputException.class)
     public void trainNoModel() {
@@ -119,7 +120,7 @@ public class DefaultTrainingServiceTest {
     @Test
     public void getProfileNames() {
         underTest.getProfileNamesFromModel();
-        then(networkHolder).should(times(1)).getLabels();
+        then(networkHolder).should(times(1)).getProfilesMap();
     }
 
     @Test
@@ -132,19 +133,22 @@ public class DefaultTrainingServiceTest {
     @Test
     public void loadSettings() {
         Settings testSettings = createTestSettings();
+        HashMap<String, String> profilesMap = new HashMap<>();
+        profilesMap.put(Integer.toString(ID), NAME);
         given(modelDAO.loadLastSettings()).willReturn(testSettings);
         given(modelDAO.getLastUsed()).willReturn(network);
         underTest.loadLastSettings();
-        then(networkHolder).should(times(1)).setModelToUse(network);
-        then(networkHolder).should(times(1)).setLabels(TEST_LABELS);
+        then(networkHolder).should(times(1)).setupWithLastSave(network, TEST_LABELS, profilesMap);
     }
 
     private Settings createTestSettings() {
         Settings testSettings = new Settings();
         testSettings.setModelToUse(MODEL_TO_USE);
-        testSettings.setNumProfiles(2);
         testSettings.setNumAudio(6);
         testSettings.setLabels(TEST_LABELS);
+        HashMap<String, String> profilesMap = new HashMap<>();
+        profilesMap.put(Integer.toString(ID), NAME);
+        testSettings.setProfilesMap(profilesMap);
         return testSettings;
     }
 
@@ -161,4 +165,6 @@ public class DefaultTrainingServiceTest {
         given(networkHolder.getModelToUse()).willReturn(null);
         underTest.setupModelForPrediction();
     }
+
+
 }

@@ -6,9 +6,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -60,31 +60,32 @@ public class FileHandler {
         return result;
     }
 
-    public void copyProfilesForUse(Map<Integer, String> profilesMap, List<Audio> audioList, int numAudio) {
+    public void copyProfilesForUse(Collection<Integer> profileIds, List<Audio> audioList, int numAudio) {
         clearAll();
         String audioDirectory = FilenameUtils.concat(baseDirectory, "audio");
         String trainDirectory = FilenameUtils.concat(audioDirectory, "train");
         String predictDirectory = FilenameUtils.concat(audioDirectory, "predict");
-        for (String profileName : profilesMap.values()) {
-            createDirectory(FilenameUtils.concat(trainDirectory, profileName));
-            createDirectory(FilenameUtils.concat(predictDirectory, profileName));
+        for (Integer id : profileIds) {
+            createDirectory(FilenameUtils.concat(trainDirectory, Integer.toString(id)));
+            createDirectory(FilenameUtils.concat(predictDirectory, Integer.toString(id)));
         }
         HashMap<Integer, Integer> counters = new HashMap<>();
-        for (Integer id : profilesMap.keySet()) {
+        for (Integer id : profileIds) {
             counters.put(id, 0);
         }
         try {
             int i = 0;
             for (Audio audio : audioList) {
                 if (audio.isTrainingData()) {
-                    Integer alreadySaved = counters.get(audio.getProfileId());
+                    int profileId = audio.getProfileId();
+                    Integer alreadySaved = counters.get(profileId);
                     if (alreadySaved < numAudio) {
-                        copy(audio, trainDirectory, profilesMap, i);
-                        counters.replace(audio.getProfileId(), ++alreadySaved);
+                        copy(audio, trainDirectory, i);
+                        counters.replace(profileId, ++alreadySaved);
                     }
 
                 } else {
-                    copy(audio, predictDirectory, profilesMap, i);
+                    copy(audio, predictDirectory, i);
                 }
                 ++i;
             }
@@ -94,9 +95,9 @@ public class FileHandler {
         }
     }
 
-    private void copy(Audio audio, String saveDirectory, Map<Integer, String> profilesMap, int i) throws IOException {
+    private void copy(Audio audio, String saveDirectory, int i) throws IOException {
         String fileName = FilenameUtils.concat(FilenameUtils.concat(
-            saveDirectory, profilesMap.get(audio.getProfileId())),
+            saveDirectory, Integer.toString(audio.getProfileId())),
             "a_" + i + ".png");
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(audio.getContent()));
         ImageIO.write(image, "png", new File(fileName));

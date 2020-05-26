@@ -1,6 +1,7 @@
 package speakeridentification.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import speakeridentification.model.data.ProfileData;
 import speakeridentification.persistence.domain.Settings;
@@ -15,7 +16,7 @@ public interface TrainingService {
 
     List<ProfileData> findAllProfiles();
 
-    List<String> getProfileNamesFromModel();
+    Map<String, String> getProfileNamesFromModel();
 
     String getNextPrediction(String profileName, Double treshold);
 

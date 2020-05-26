@@ -1,5 +1,6 @@
 package speakeridentification.model.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +35,14 @@ public class DefaultTrainingService implements TrainingService {
 
     @Override public void train(String modelToUse, List<ProfileData> profilesChosen, int numProfiles, int numAudio) {
         checkInput(modelToUse, profilesChosen, numProfiles);
-        Map<Integer, String> profilesMap = new HashMap<>();
-        profilesChosen.forEach(p -> profilesMap.put(p.getId(), p.getName()));
-        List<Audio> audios = profileDAO.findAllAudioByProfileIds(profilesMap.keySet());
-        fileHandler.copyProfilesForUse(profilesMap, audios, numAudio);
-        networkHolder.setPretrainedModel(modelDAO.getPretrainedModel(modelToUse));
-        MultiLayerNetwork newModel = networkHolder.train();
+        HashMap<String, String> profilesMap = new HashMap<>();
+        List<Integer> profileIds = new ArrayList<>();
+        profilesChosen.forEach(p -> {profilesMap.put(Integer.toString(p.getId()), p.getName()); profileIds.add(p.getId());});
+        List<Audio> audios = profileDAO.findAllAudioByProfileIds(profileIds);
+        fileHandler.copyProfilesForUse(profileIds, audios, numAudio);
+        MultiLayerNetwork newModel = networkHolder.train(modelDAO.getPretrainedModel(modelToUse), profilesMap);
         modelDAO.saveLastUsed(newModel);
-        modelDAO.saveLastSettings(new Settings(modelToUse, networkHolder.getLabels(), numProfiles, numAudio));
+        modelDAO.saveLastSettings(new Settings(modelToUse, networkHolder.getLabels(), numAudio, profilesMap));
     }
 
     private void checkInput(String modelToUse, List<ProfileData> profilesChosen, int numProfiles) {
@@ -59,8 +60,8 @@ public class DefaultTrainingService implements TrainingService {
         return profileDAO.findAllProfiles().stream().map(this::transform).collect(Collectors.toList());
     }
 
-    @Override public List<String> getProfileNamesFromModel() {
-        return networkHolder.getLabels(); // TODO ?
+    @Override public Map<String, String> getProfileNamesFromModel() {
+        return networkHolder.getProfilesMap();
     }
 
     @Override public String getNextPrediction(String profileName, Double treshold) {
@@ -73,8 +74,8 @@ public class DefaultTrainingService implements TrainingService {
 
     @Override public Settings loadLastSettings() {
         Settings settings = modelDAO.loadLastSettings();
-        networkHolder.setModelToUse(modelDAO.getLastUsed());
-        networkHolder.setLabels(settings.getLabels());
+        MultiLayerNetwork lastUsed = modelDAO.getLastUsed();
+        networkHolder.setupWithLastSave(lastUsed, settings.getLabels(), settings.getProfilesMap());
         return settings;
     }
 
