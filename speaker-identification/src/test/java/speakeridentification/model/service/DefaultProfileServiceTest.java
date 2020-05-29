@@ -87,6 +87,13 @@ public class DefaultProfileServiceTest {
  }
 
  @Test(expectedExceptions = { InvalidInputException.class })
+ public void createProfileWithLongName() {
+  ProfileData input = createTestProfileData();
+  input.setName("1234567890123456789012345678901234567890a");
+  underTest.createProfile(input);
+ }
+
+ @Test(expectedExceptions = { InvalidInputException.class })
  public void createProfileWithEmptySource() {
   ProfileData input = createTestProfileData();
   input.getSource().setSourcePath("");

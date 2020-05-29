@@ -12,8 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.AllArgsConstructor;
 import speakeridentification.persistence.domain.Audio;
@@ -23,8 +21,6 @@ import speakeridentification.persistence.exceptions.PersistenceException;
 
 @AllArgsConstructor
 public class DefaultProfileDAO implements ProfileDAO {
-
-    private static final Logger log = LoggerFactory.getLogger(DefaultProfileDAO.class);
 
     private static final String CREATE_PROFILE ="insert into profile (name, type) values (?, ?)";
     private static final String CREATE_AUDIO ="insert into audio (profile_id, training_data, content) values (?, ?, ?)";

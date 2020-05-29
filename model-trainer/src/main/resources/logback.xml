@@ -10,7 +10,7 @@
   </appender>
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>C:/Users/user/Projects/logs/model-trainer_${bySecond}.log</file>
+    <file>logs/model-trainer_${bySecond}.log</file>
     <append>true</append>
     <encoder>
       <pattern>${pattern}</pattern>

@@ -46,8 +46,8 @@ public class NeuralNetworkHolder {
     @Setter private MultiLayerNetwork pretrainedModel;
     @Getter @Setter private MultiLayerNetwork modelToUse;
     @Getter @Setter private List<String> labels;
-    private HashMap<String, Iterator<File>> predictIterators;
     @Getter private HashMap<String, String> profilesMap;
+    private HashMap<String, Iterator<File>> predictIterators;
 
     public NeuralNetworkHolder(String baseDirectory) {
         trainingDirectory = FilenameUtils.concat(FilenameUtils.concat(baseDirectory, "audio"),"train");

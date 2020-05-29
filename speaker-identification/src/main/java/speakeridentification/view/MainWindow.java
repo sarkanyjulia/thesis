@@ -4,9 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -27,6 +29,7 @@ public class MainWindow extends JFrame {
     private TrainingService trainingService;
     private boolean soxPresent;
 
+    JButton homeButton;
     JButton profilesButton;
     JButton trainingButton;
     List<JButton> menuButtons;
@@ -56,6 +59,9 @@ public class MainWindow extends JFrame {
                 showExitConfirmation();
             }
         });
+        URL iconURL = Thread.currentThread().getContextClassLoader().getResource("logo.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+        setIconImage(icon.getImage());
     }
 
     private void showExitConfirmation() {
@@ -80,16 +86,18 @@ public class MainWindow extends JFrame {
 
     private void createGUI() {
         JToolBar mainToolBar = new JToolBar();
-        //mainPanel = new ProfilesPanel(profileService);
-        mainPanel = new TrainingPanel(trainingService, this);
+        mainPanel = new HomePanel();
 
+        homeButton = new JButton("Home");
         profilesButton = new JButton("Profiles");
-        trainingButton = new JButton("Train & predict");
+        trainingButton = new JButton("Train & Predict");
         menuButtons = new ArrayList<>();
 
+        menuButtons.add(homeButton);
         menuButtons.add(profilesButton);
         menuButtons.add(trainingButton);
 
+        mainToolBar.add(homeButton);
         mainToolBar.add(profilesButton);
         mainToolBar.add(trainingButton);
 
@@ -99,12 +107,23 @@ public class MainWindow extends JFrame {
     }
 
     private void setActionListeners() {
+        homeButton.addActionListener((ActionEvent e) -> {
+            homeButtonClicked();
+        });
         profilesButton.addActionListener((ActionEvent e) -> {
             profilesButtonClicked();
         });
         trainingButton.addActionListener((ActionEvent e) -> {
             trainingButtonClicked();
         });
+    }
+
+    private void homeButtonClicked() {
+        mainPanel.removeAll();
+        mainPanel = new HomePanel();
+        getContentPane().add(mainPanel, BorderLayout.CENTER);
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     private void profilesButtonClicked() {

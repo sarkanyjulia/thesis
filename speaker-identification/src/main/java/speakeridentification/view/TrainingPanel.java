@@ -334,6 +334,7 @@ public class TrainingPanel extends JPanel {
         statusLabel.setText(MODEL_NOT_TRAINED);
         profilesToUse = new ArrayList<>();
         modelToUse = null;
+        checkSpinnerMinimum();
     }
 
     private void onPredictClicked() {

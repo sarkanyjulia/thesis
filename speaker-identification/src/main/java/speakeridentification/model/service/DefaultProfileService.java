@@ -27,6 +27,7 @@ public class DefaultProfileService implements ProfileService {
 
     private void checkInput(ProfileData toSave) {
         if (toSave.getName().isBlank()) throw new InvalidInputException("Name cannot be empty");
+        if (toSave.getName().length() > 40) throw new InvalidInputException("Name cannot be longer than 40 characters");
         if (toSave.getSource().getSourcePath().isBlank()) throw new InvalidInputException("Source cannot be empty");
 
     }

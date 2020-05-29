@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.NoSuchElementException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -44,9 +46,12 @@ public class PredictModal extends JDialog {
     private List<JButton> activeProfileButtons;
 
     public PredictModal(TrainingService service) {
-        super((Frame) null, "Predict", true);
+        super((Frame) null, "Predictions", true);
         this.service = service;
         setMinimumSize(new Dimension(600, 300));
+        URL iconURL = Thread.currentThread().getContextClassLoader().getResource("logo.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+        setIconImage(icon.getImage());
         activeProfileButtons = new ArrayList<>();
         setLocationRelativeTo(null);
         initData();

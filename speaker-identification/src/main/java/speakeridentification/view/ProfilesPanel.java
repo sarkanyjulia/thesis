@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import lombok.extern.slf4j.Slf4j;
+import speakeridentification.model.exceptions.SoxException;
 import speakeridentification.persistence.domain.SpeakerType;
 import speakeridentification.model.data.AudioSource;
 import speakeridentification.model.data.ProfileData;
@@ -219,13 +220,13 @@ public class ProfilesPanel extends JPanel {
                 catch (ExecutionException ex) {
                     log.error(ex.getMessage(), ex);
                     Throwable cause = ex.getCause();
-                    if (cause instanceof InvalidInputException || cause instanceof PersistenceException) {
+                    if (cause instanceof InvalidInputException || cause instanceof PersistenceException || cause instanceof SoxException) {
                         showErrorMessage("Failed to save profile - " + cause.getMessage());
                     }
-                    else showErrorMessage("Failed to save profile");
+                    else showErrorMessage("Failed to save profile - unexpected error");
                 } catch (Exception ex) {
                     log.error(ex.getMessage(), ex);
-                    showErrorMessage("Failed to save profile");
+                    showErrorMessage("Failed to save profile - unexpected error");
                 } finally {
                     enableButtons(true);
                     statusLabel.setText("");

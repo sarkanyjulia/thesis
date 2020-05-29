@@ -6,9 +6,10 @@ target/
 logs/
 *.log
 speakerdb
-app_files
+*app_files/
 *.*uml
 .settings/
 .project
 *.ucls
 .classpath
+audioTemp/
