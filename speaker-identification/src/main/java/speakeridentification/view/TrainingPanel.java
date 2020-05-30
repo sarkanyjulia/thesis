@@ -340,6 +340,7 @@ public class TrainingPanel extends JPanel {
     private void onPredictClicked() {
         service.setupModelForPrediction();
         PredictModal modal = new PredictModal(service);
+        modal.setLocationRelativeTo(this);
         modal.setVisible(true);
     }
 
@@ -396,7 +397,6 @@ public class TrainingPanel extends JPanel {
     }
 
     private void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
-
 }

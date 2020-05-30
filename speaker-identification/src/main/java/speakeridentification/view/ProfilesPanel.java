@@ -104,7 +104,6 @@ public class ProfilesPanel extends JPanel {
 
         // right side
         rightSide.setLayout(new BoxLayout(rightSide, BoxLayout.PAGE_AXIS));
-
         rightSide.setBorder(BorderFactory.createTitledBorder("Add new profile"));
 
         JPanel line1 = new JPanel();
@@ -243,7 +242,7 @@ public class ProfilesPanel extends JPanel {
     }
 
     private void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     private void clearInput() {
@@ -264,7 +263,6 @@ public class ProfilesPanel extends JPanel {
             sourcePath.setText(file.getAbsolutePath());
             selectedSourceType = SourceType.WAV;
         }
-
     }
 
     private void onAddSpectrogramsClicked() {
@@ -281,7 +279,7 @@ public class ProfilesPanel extends JPanel {
     private void onDeleteClicked() {
         if (profilesTable.getSelectedRows().length > 0) {
             int n = JOptionPane.showConfirmDialog(
-                null,
+                this,
                 "Are you sure you want to delete the selected profile(s)?",
                 "Confirmation",
                 JOptionPane.OK_CANCEL_OPTION,
@@ -306,7 +304,7 @@ public class ProfilesPanel extends JPanel {
             tableModel = new ProfilesTableModel(profiles);
             profilesTable.setModel(tableModel);
         } catch (Exception ex) {
-            log.error(ex.getMessage(), ex); // TODO cause?
+            log.error(ex.getMessage(), ex);
             showErrorMessage("Failed to delete profile(s).");
         }
     }

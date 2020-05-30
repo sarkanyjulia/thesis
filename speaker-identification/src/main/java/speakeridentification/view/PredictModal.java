@@ -26,7 +26,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import speakeridentification.model.deeplearning.NeuralNetworkHolder;
 import speakeridentification.model.service.TrainingService;
@@ -53,7 +52,6 @@ public class PredictModal extends JDialog {
         ImageIcon icon = new ImageIcon(iconURL);
         setIconImage(icon.getImage());
         activeProfileButtons = new ArrayList<>();
-        setLocationRelativeTo(null);
         initData();
         createGUI();
     }
@@ -228,11 +226,11 @@ public class PredictModal extends JDialog {
     }
 
     private void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     private void showInfoMessage(String message) {
-        JOptionPane.showMessageDialog(null, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void incrementCounter(JLabel label) {

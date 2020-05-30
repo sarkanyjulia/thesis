@@ -2,8 +2,6 @@ package speakeridentification.model.deeplearning;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
 
 import org.datavec.api.io.filters.BalancedPathFilter;
@@ -14,7 +12,6 @@ import org.datavec.image.loader.BaseImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.slf4j.Logger;
 
 public class SpectrogramIterator {
 

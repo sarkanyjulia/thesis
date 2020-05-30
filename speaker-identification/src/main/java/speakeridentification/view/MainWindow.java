@@ -43,7 +43,7 @@ public class MainWindow extends JFrame {
         createGUI();
         setActionListeners();
         if (!soxPresent) {
-            JOptionPane.showMessageDialog(null, "<html>SoX not found on your device.<br>Download and install it from http://sox.sourceforge.net/ to enable input from audio files!</html>", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "<html>SoX not found on your device.<br>Download and install it from http://sox.sourceforge.net/ to enable input from audio files!</html>", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -66,7 +66,7 @@ public class MainWindow extends JFrame {
 
     private void showExitConfirmation() {
         int n = JOptionPane.showConfirmDialog(
-            null,
+            this,
             CONFIRM_EXIT_MESSAGE,
             CONFIRMATION_TITLE,
             JOptionPane.OK_CANCEL_OPTION,

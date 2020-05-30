@@ -30,7 +30,7 @@ public class HomePanel extends JPanel {
         + "you used for training. By clicking one of these, the program loads a new sample of the given profile and makes the network predict a profile name "
         + "for it. You can set a treshold value for the predictions between 0 and 100%. It means that if the network is less certain than the set treshold "
         + "about its prediction, the program will ignore it and returns \"uncertain\" instead."
-        + "<h2>How delete previous training</h2>"
+        + "<h2>How to delete previous training</h2>"
         + "Go to <i>Train & Predict</i> and hit <i>Reset</i>.";
 
     public HomePanel() {

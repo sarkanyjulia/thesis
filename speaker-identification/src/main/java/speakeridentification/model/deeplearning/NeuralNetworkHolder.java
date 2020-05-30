@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -43,7 +42,6 @@ public class NeuralNetworkHolder {
     private final String trainingDirectory;
     private final String predictDirectory;
 
-    @Setter private MultiLayerNetwork pretrainedModel;
     @Getter @Setter private MultiLayerNetwork modelToUse;
     @Getter @Setter private List<String> labels;
     @Getter private HashMap<String, String> profilesMap;
@@ -57,15 +55,9 @@ public class NeuralNetworkHolder {
         profilesMap = new HashMap<>();
     }
 
-    private void setupForTraining(MultiLayerNetwork pretrainedModel, HashMap<String, String> profilesMap) {
-        if (pretrainedModel == null) throw new ModelStateException("Unable to find pretrained model");
-        this.pretrainedModel = pretrainedModel;
-        this.profilesMap = profilesMap;
-        log.info("Loaded pretrained model\n" + pretrainedModel.summary());
-    }
-
     public MultiLayerNetwork train(MultiLayerNetwork pretrainedModel, HashMap<String, String> profilesMap) {
-        setupForTraining(pretrainedModel, profilesMap);
+        if (pretrainedModel == null) throw new ModelStateException("Unable to find pretrained model");
+        this.profilesMap = profilesMap;
         int layerIndex = pretrainedModel.getLayer(featureExtractionLayer).getIndex();
         SpectrogramIterator.setup(batchSize,trainPerc, trainingDirectory);
         DataSetIterator trainIterator = SpectrogramIterator.trainIterator();
@@ -100,7 +92,6 @@ public class NeuralNetworkHolder {
     }
 
     public void clearAll() {
-        pretrainedModel = null;
         modelToUse = null;
         labels.clear();
         predictIterators.clear();
