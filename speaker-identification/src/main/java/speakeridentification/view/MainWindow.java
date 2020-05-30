@@ -21,7 +21,7 @@ import speakeridentification.persistence.DbHandler;
 
 public class MainWindow extends JFrame {
 
-    public static final String MAIN_WINDOW_TITLE = "Speaker identification demo";
+    public static final String MAIN_WINDOW_TITLE = "Speaker Identification";
     public static final String CONFIRM_EXIT_MESSAGE = "Are you sure you want to exit the program?";
     public static final String CONFIRMATION_TITLE = "Confirmation";
 

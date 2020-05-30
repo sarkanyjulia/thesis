@@ -37,7 +37,10 @@ public class ProbabilityInputField extends JTextField implements FocusListener {
     }
 
     private boolean canContinue(String text) {
-        return  text.equals("") || text.equals("100") || text.matches("\\d{1,2}") || text.matches("\\d{1,2}\\.\\d{0,2}") ;
+        return  text.equals("")
+            || text.equals("100")
+            || text.matches("\\d{1,2}")
+            || text.matches("\\d{1,2}\\.\\d{0,2}") ;
     }
 
     public Double getValue() {
@@ -60,5 +63,7 @@ public class ProbabilityInputField extends JTextField implements FocusListener {
         if (text.isBlank()) setText("0.0");
         if (text.matches("\\d{1,3}")) setText(text + ".0");
         if (text.matches("\\d{1,2}\\.")) setText(text + "0");
+        if (text.matches("\\d{1,2}\\.00")) setText(text.substring(0, text.length()-1));
+        if (text.matches("0\\d{1}\\.\\d{1,2}")) setText(text.substring(1));
     }
 }

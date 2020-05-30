@@ -78,13 +78,13 @@ public class PredictModal extends JDialog {
         tresholdPanel.setLayout(new BoxLayout(tresholdPanel, BoxLayout.LINE_AXIS));
         tresholdField = new ProbabilityInputField();
         tresholdField.setMaximumSize(new Dimension(60,30));
-        tresholdField.setMinimumSize(new Dimension(50,30));
+        tresholdField.setMinimumSize(new Dimension(60,30));
         tresholdPanel.add(new JLabel("Acceptance treshold:"));
         tresholdPanel.add(Box.createRigidArea(new Dimension(10, 10)));
         tresholdPanel.add(tresholdField);
         tresholdPanel.add(Box.createRigidArea(new Dimension(5, 10)));
         tresholdPanel.add(new JLabel("%"));
-        tresholdPanel.add(Box.createRigidArea(new Dimension(20,20)));
+        tresholdPanel.add(Box.createRigidArea(new Dimension(10,20)));
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.LINE_AXIS));
