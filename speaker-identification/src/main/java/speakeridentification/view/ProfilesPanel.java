@@ -213,6 +213,7 @@ public class ProfilesPanel extends JPanel {
                     profiles.add(toSave);
                     tableModel = new ProfilesTableModel(profiles);
                     profilesTable.setModel(tableModel);
+                    showInfoMessage("Saved profile successfully");
                 } catch (InterruptedException ex) {
                     //ignore
                 }
@@ -243,6 +244,10 @@ public class ProfilesPanel extends JPanel {
 
     private void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showInfoMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void clearInput() {
