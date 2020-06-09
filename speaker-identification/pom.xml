@@ -60,11 +60,6 @@
       <version>${dl4j.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.datavec</groupId>
-      <artifactId>datavec-data-audio</artifactId>
-      <version>${dl4j.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.googlecode.json-simple</groupId>
       <artifactId>json-simple</artifactId>
       <version>${json-simple.version}</version>
