@@ -11,12 +11,12 @@ import speakeridentification.model.exceptions.SoxException;
 @Slf4j
 public class SoxHelper {
 
-    public static final String CONVERT_TO_MONO = "sox %s -c 1 -r 16000 -b 16 %s";
-    public static final String TRIM = "sox %s %s silence 1 0.1 1%% reverse silence 1 0.1 1%% reverse";
-    public static final String REMOVE_SILENCE = "sox %s %s silence -l 1 0.1 1%% -1 1.0 1%%";
-    public static final String LIMIT_LENGTH = "sox %s %s trim 0 150";
-    public static final String SPLIT = "sox %s %s trim 0 5 : newfile : restart";
-    public static final String CONVERT_TO_SPECTROGRAM = "sox %s -n spectrogram -r -o %s";
+    public static final String CONVERT_TO_MONO = "sox \"%s\" -c 1 -r 16000 -b 16 \"%s\"";
+    public static final String TRIM = "sox \"%s\" \"%s\" silence 1 0.1 1%% reverse silence 1 0.1 1%% reverse";
+    public static final String REMOVE_SILENCE = "sox \"%s\" \"%s\" silence -l 1 0.1 1%% -1 1.0 1%%";
+    public static final String LIMIT_LENGTH = "sox \"%s\" \"%s\" trim 0 150";
+    public static final String SPLIT = "sox \"%s\" \"%s\" trim 0 5 : newfile : restart";
+    public static final String CONVERT_TO_SPECTROGRAM = "sox \"%s\" -n spectrogram -r -o \"%s\"";
     public static final String BASE_DIR = "tempAudio";
     private final static boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
 
